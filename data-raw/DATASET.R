@@ -1,4 +1,5 @@
 ## code to prepare `DATASET` dataset goes here
+library(tidyverse)
 
 twentygen <- readr::read_rds("data-raw/twentygen.rds")
 
@@ -8,6 +9,16 @@ drumpop <- readr::read_rds("data-raw/red_drum_rad.rds")
 
 reddrum_map <- readr::read_tsv("data-raw/consensus_map.tab")
 
-reddrum <- list(geno = drumpop, map = reddrum_map)
+reddrum_genes <- readr::read_rds("data-raw/soc_gene_tbl.rds") %>%
+  select(id, scaffold, start, end, desc)
+
+reddrum_hits <- readr::read_csv("data-raw/soc_best_hits.csv")
+
+reddrum_loci <- tibble::tibble(locus = locNames(drumpop)) %>%
+  left_join(reddrum_map, by = "locus") %>%
+  left_join(reddrum_hits, by = c("locus" = "contig"))
+
+
+reddrum <- list(geno = drumpop, map = reddrum_loci, genes = reddrum_genes)
 
 usethis::use_data(reddrum, overwrite = TRUE, compress = "gzip")
