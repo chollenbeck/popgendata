@@ -22,3 +22,7 @@ reddrum_loci <- tibble::tibble(locus = locNames(drumpop)) %>%
 reddrum <- list(geno = drumpop, map = reddrum_loci, genes = reddrum_genes)
 
 usethis::use_data(reddrum, overwrite = TRUE, compress = "gzip")
+
+otsh_color <- readr::read_rds("data-raw/otsh_color_gwas.rds")
+
+usethis::use_data(otsh_color, overwrite = TRUE, compress = "gzip")
