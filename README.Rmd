@@ -1,0 +1,78 @@
+---
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(adegenet)
+```
+
+# {popgendata}
+
+Datasets for teaching and testing population genetics workflows
+
+## Installation
+
+```{r, eval=FALSE}
+remotes::install_github("chollenbeck/popgendata")
+```
+
+## Example usage
+
+Load an example simulation dataset in genind format
+
+```{r}
+library(popgendata)
+library(pantomime)
+
+twentygen <- popgendata::twentygen
+```
+
+Plot the trajectory of an allele over 20 generations
+
+```{r}
+twentygen %>%
+  get_allele_freqs() %>% # From pantomime
+  mutate(generation = as.integer(pop)) %>%
+  filter(locus == "SNP_1", allele == "G") %>%
+  ggplot(aes(x = generation, y = freq)) +
+    geom_line()
+
+```
+
+# Larger datasets
+
+```{r}
+
+data("reddrum")
+
+gen <- reddrum$geno
+```
+
+Run a quick PCA of the data
+
+```{r}
+
+pca_tbl <- qpca(gen)
+
+ggplot(pca_tbl, aes(x = Axis1, y = Axis2, col = pop)) +
+  geom_point()
+
+```
+
+Calculate stats by locus and pop and Plot `F_{IS}`: 
+
+```{r}
+stats <- get_locus_stats(gen)
+
+stats
+```
+
+
+```{r}
+ggplot(stats, aes(x = fis, fill = pop)) +
+  geom_histogram()
+
+```
+
